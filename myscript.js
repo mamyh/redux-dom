@@ -7,8 +7,23 @@ const {parent,counter,addCounter,reset} = ['parent','counter', 'increment','decr
       }
 },{});
 
+//action identifer
+const INCREMENT="increment";
+const DECREMENT="decrement";
+const ADD="addcounter";
+const RESET ="reset"
 
-
+//action creator
+function changeTheValue(type=INCREMENT,payload={}){
+  return{
+    type,payload
+  }
+}
+function ChangeUi(type=ADD){
+  return{
+     type
+  }
+}
 const initialValue ={
   counter:[
     {id:1,identity:[identifer(),identifer()+'$'],value:0}
@@ -25,9 +40,8 @@ function identifer(){
 
 
 const counterReducer=(state=initialValue, {type,payload={}})=>{
-   console.log('i am from reducer');
     switch(type){
-        case 'increment':{
+        case INCREMENT:{
           return{
             ...state,
             counter:state.counter.map(item=>{
@@ -42,7 +56,7 @@ const counterReducer=(state=initialValue, {type,payload={}})=>{
             })
           }
         }
-        case "decrement":{
+        case DECREMENT:{
           return{
             ...state,
             counter:state.counter.map(item=>{
@@ -56,7 +70,7 @@ const counterReducer=(state=initialValue, {type,payload={}})=>{
             })
           }
         }
-        case 'addcounter':{
+        case ADD:{
            return{
             ...state,
             counter:[
@@ -69,7 +83,7 @@ const counterReducer=(state=initialValue, {type,payload={}})=>{
             ]
            }
         }
-        case 'reset':{
+        case RESET:{
           return {
             ...state,
             counter:state.counter.map(item=>{
@@ -93,18 +107,18 @@ function render(){
 parent.innerHTML=state.counter.map((item)=>{
   return `<div class="mx-auto max-w-md mt-10  space-y-5 ">
                     <div
-                        data-id ="${item.id.toString()}" class="findDom max-w-md p-4 h-auto flex flex-col items-center justify-center space-y-5 bg-white rounded shadow "
+                         class="findDom max-w-md p-4 h-auto flex flex-col items-center justify-center space-y-5 bg-white rounded shadow "
                       >
 
                     <div  class="text-2xl font-semibold counter">${item.value.toString()}</div>
                     <div class="flex space-x-3">
                         <button
-                            class="bg-indigo-400 text-white px-3 py-2 rounded shadow increment"  data-id =${item.id} id=${item.identity[0]}  
+                            class="bg-indigo-400 text-white px-3 py-2 rounded shadow increment"  id=${item.identity[0]}  
                         >
                             Increment
                         </button>
                         <button 
-                            class="bg-red-400 text-white px-3 py-2 rounded shadow decrement" data-id =${item.id} id="${item.identity[1]}"
+                            class="bg-red-400 text-white px-3 py-2 rounded shadow decrement" id="${item.identity[1]}"
                         >
                             Decrement
                         </button>
@@ -116,42 +130,27 @@ parent.innerHTML=state.counter.map((item)=>{
 });
 state.counter.forEach((item)=>{
   document.getElementById(item.identity[0]).addEventListener('click',()=>{
-    store.dispatch({
-      type:'increment',
-      payload:{
-        value:5,
-        id:item.id
-      }
-    })
+    store.dispatch(changeTheValue(INCREMENT,{value:5,id:item.id }))
   });
 
 
   document.getElementById(item.identity[1]).addEventListener('click',()=>{
-    store.dispatch({
-      type:'decrement',
-      payload:{
-        value:5,
-        id:item.id
-      }
-    })
+    store.dispatch(changeTheValue(DECREMENT,{value:5, id:item.id}))
   });
 
 })
 
 }
-
+//first rendering
 render();
 
 addCounter.addEventListener('click',()=>{
-  store.dispatch({
-    type:'addcounter',
-  })
+  store.dispatch(ChangeUi(ADD))
 });
 reset.addEventListener('click',()=>{
-  store.dispatch({
-    type:'reset'
-  })
+  store.dispatch(ChangeUi(RESET))
 })
+//subscribing the ui
 store.subscribe(render);
 
 
